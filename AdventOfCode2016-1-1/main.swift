@@ -139,7 +139,7 @@ func executeInstruction(instruction: Instruction, currentPosition: inout Positio
         }
     }
 
-    print("new position \(position)")
+    print("new position \(currentPosition)")
 }
 
 // the initial position
