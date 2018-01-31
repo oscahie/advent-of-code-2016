@@ -56,7 +56,7 @@ for column in 0...7
 
     input.enumerateLines { (line, stop) in
 
-        let char = line.characters[line.index(line.startIndex, offsetBy: column)]
+        let char = line[line.index(line.startIndex, offsetBy: column)]
 
         if frequencyTable[char] == nil
         {

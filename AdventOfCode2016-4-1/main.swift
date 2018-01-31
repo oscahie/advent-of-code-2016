@@ -52,11 +52,13 @@ func parseRoom(roomString: String) -> Room?
         let sectorIdRange = roomString.index(roomString.startIndex, offsetBy: match.range(at: 2).location) ..< roomString.index(roomString.startIndex, offsetBy: match.range(at: 2).location+match.range(at: 2).length)
         let checksumRange = roomString.index(roomString.startIndex, offsetBy: match.range(at: 3).location) ..< roomString.index(roomString.startIndex, offsetBy: match.range(at: 3).location+match.range(at: 3).length)
 
-        return Room(name: roomString.substring(with: nameRange).replacingOccurrences(of: "-", with: ""),
-                sectorId: Int(roomString.substring(with: sectorIdRange))!,
-                checksum: roomString.substring(with: checksumRange))
+        return Room(name: roomString[nameRange].replacingOccurrences(of: "-", with: ""),
+                sectorId: Int(roomString[sectorIdRange])!,
+                checksum: String(roomString[checksumRange]))
     }
 
+    print("bad input: \(roomString)")
+    
     return nil
 }
 
@@ -111,16 +113,18 @@ var sectorIdSum = 0
 
 input.enumerateLines { (line, stop) in
 
-    let room = parseRoom(roomString: line)
-    let checksum = calculateChecksum(name: (room?.name)!)
-
-    if checksum == room?.checksum
+    if let room = parseRoom(roomString: line)
     {
-        numRealRooms += 1
-        sectorIdSum += (room?.sectorId)!
-    }
+        let checksum = calculateChecksum(name: room.name)
 
-    numTotalRooms += 1
+        if checksum == room.checksum
+        {
+            numRealRooms += 1
+            sectorIdSum += room.sectorId
+        }
+
+        numTotalRooms += 1
+    }
 }
 
 print("Number of real rooms: \(numRealRooms) out of \(numTotalRooms), with a sum of sector IDs: \(sectorIdSum)")

@@ -47,11 +47,13 @@ func parseRoom(roomString: String) -> Room?
         let sectorIdRange = roomString.index(roomString.startIndex, offsetBy: match.range(at: 2).location) ..< roomString.index(roomString.startIndex, offsetBy: match.range(at: 2).location+match.range(at: 2).length)
         let checksumRange = roomString.index(roomString.startIndex, offsetBy: match.range(at: 3).location) ..< roomString.index(roomString.startIndex, offsetBy: match.range(at: 3).location+match.range(at: 3).length)
 
-        return Room(name: roomString.substring(with: nameRange),
-                    sectorId: Int(roomString.substring(with: sectorIdRange))!,
-                    checksum: roomString.substring(with: checksumRange))
+        return Room(name: String(roomString[nameRange]),
+                sectorId: Int(roomString[sectorIdRange])!,
+                checksum: String(roomString[checksumRange]))
     }
 
+    print("bad input: \(roomString)")
+    
     return nil
 }
 
@@ -143,16 +145,18 @@ func decrypt(room: inout Room) -> Room
 
 input.enumerateLines { (line, stop) in
 
-    var room = parseRoom(roomString: line)
-    let checksum = calculateChecksum(name: (room?.name)!)
-
-    if checksum == room?.checksum
+    if var room = parseRoom(roomString: line)
     {
-        room = decrypt(room: &room!)
+        let checksum = calculateChecksum(name: room.name)
 
-        if (room?.name.hasPrefix("northpole"))!
+        if checksum == room.checksum
         {
-            print("Found it: \(String(describing: room))")
+            room = decrypt(room: &room)
+
+            if room.name.hasPrefix("northpole")
+            {
+                print("Found it: \(String(describing: room))")
+            }
         }
     }
 }

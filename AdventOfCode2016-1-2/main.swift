@@ -69,7 +69,7 @@ func readNextInstruction() -> Instruction?
     let nextInputEntry = input[inputIndex] as String
     inputIndex += 1
 
-    let numericValue = nextInputEntry.substring(from: nextInputEntry.index(nextInputEntry.startIndex, offsetBy: 1))
+    let numericValue = String(nextInputEntry[nextInputEntry.index(nextInputEntry.startIndex, offsetBy: 1)...])
 
     if let numBlocks = NumberFormatter().number(from: numericValue)
     {

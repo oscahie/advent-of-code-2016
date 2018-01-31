@@ -55,33 +55,6 @@ import Foundation
 
  */
 
-extension String {
-
-    var length: Int {
-        return self.count
-    }
-
-    subscript (i: Int) -> String {
-        return self[Range(i ..< i + 1)]
-    }
-
-    func substring(from: Int) -> String {
-        return self[Range(min(from, length) ..< length)]
-    }
-
-    func substring(to: Int) -> String {
-        return self[Range(0 ..< max(0, to))]
-    }
-
-    subscript (r: Range<Int>) -> String {
-        let range = Range(uncheckedBounds: (lower: max(0, min(length, r.lowerBound)),
-                                            upper: min(length, max(0, r.upperBound))))
-        let start = index(startIndex, offsetBy: range.lowerBound)
-        let end = index(start, offsetBy: range.upperBound - range.lowerBound)
-        return String(self[Range(start ..< end)])
-    }
-}
-
 
 let numPixelsWide = 50
 let numPixelsTall = 6
@@ -158,6 +131,8 @@ func parseInstruction(instructionStr: String) -> Instruction?
         return .RotateColumn(column: A, pixels: B)
     }
 
+    print("bad instruction: \(instructionStr)")
+    
     return nil
 }
 
@@ -219,25 +194,27 @@ func rotateColumn(column: Int, pixels: Int)
 
 input.enumerateLines { (line, stop) in
 
-    let instruction = parseInstruction(instructionStr: line)!
-    print(instruction)
-
-    switch instruction
+    if let instruction = parseInstruction(instructionStr: line)
     {
-    case .Rect(let width, let height):
-        createRectangle(width: width, height: height)
-        break
+        print(instruction)
 
-    case .RotateRow(let row, let pixels):
-        rotateRow(row: row, pixels: pixels)
-        break
+        switch instruction
+        {
+        case .Rect(let width, let height):
+            createRectangle(width: width, height: height)
+            break
 
-    case .RotateColumn(let column, let pixels):
-        rotateColumn(column: column, pixels: pixels)
-        break
+        case .RotateRow(let row, let pixels):
+            rotateRow(row: row, pixels: pixels)
+            break
+
+        case .RotateColumn(let column, let pixels):
+            rotateColumn(column: column, pixels: pixels)
+            break
+        }
+
+        drawScreen()
     }
-
-    drawScreen()
 }
 
 // count the lit pixels
